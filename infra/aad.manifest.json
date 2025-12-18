@@ -1,0 +1,34 @@
+{
+  "id": "${{AAD_APP_OBJECT_ID}}",
+  "appId": "${{AAD_APP_CLIENT_ID}}",
+  "displayName": "PTO Request Agent (TSP)",
+  "signInAudience": "AzureADMyOrg",
+  "servicePrincipalLockConfiguration": {
+    "isEnabled": true,
+    "allProperties": true,
+    "credentialsWithUsageVerify": true,
+    "credentialsWithUsageSign": true,
+    "identifierUris": false,
+    "tokenEncryptionKeyId": true
+  },
+  "requiredResourceAccess": [
+    {
+      "resourceAppId": "Microsoft Graph",
+      "resourceAccess": [
+        {
+          "id": "User.Read",
+          "type": "Scope"
+        },
+        {
+          "id": "Sites.ReadWrite.All",
+          "type": "Scope"
+        }
+      ]
+    }
+  ],
+  "web": {
+    "redirectUris": [
+      "https://teams.microsoft.com/api/platform/v1.0/oAuthRedirect"
+    ]
+  }
+}
