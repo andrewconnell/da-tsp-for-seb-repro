@@ -5,7 +5,9 @@ import "./actions/msgraph.tsp";
 import "./prompts/instructions.tsp";
 import "./env.tsp";
 
+using TypeSpec.Http;
 using TypeSpec.M365.Copilot.Agents;
+using TypeSpec.M365.Copilot.Actions;
 
 @agent(
   "PTO Request (TSP)",
@@ -26,10 +28,30 @@ using TypeSpec.M365.Copilot.Agents;
   text: "Request PTO in Pyongyang."
 })
 
-namespace PtoRequest {
+namespace PtoRequestAgent {
+
+  // this won't work due to https://github.com/OfficeDev/microsoft-365-agents-toolkit/issues/15028
+  // op pto_policy_doc is AgentCapabilities.OneDriveAndSharePoint<ItemsBySharePointIds = [
+  //   { itemId: Environment.SPO_PTO_POLICY_DOC_ID }
+  // ]>;
+  // ... must use literal :(
   op pto_policy_doc is AgentCapabilities.OneDriveAndSharePoint<ItemsBySharePointIds = [
     { itemId: "00000000-0000-0000-0000-000000000000" }
   ]>;
 
-  op getCurrentUser is global.MicrosoftGraphAPI.getCurrentUser;
+  @service
+  @server(MicrosoftGraphAPI.SERVER_URL, MicrosoftGraphAPI.SERVER_DESCRIPTION)
+  @actions(MicrosoftGraphAPI.ACTIONS_METADATA)
+  @useAuth(MicrosoftGraphAPI.PtoRequestAgent_MSGraphOAuth)
+  namespace MicrosoftGraphApiActions{
+    // used to get the current user's EntraIdUser.ObjectId property
+    @summary("Get current user profile")
+    op getCurrentUser is MicrosoftGraphAPI.getCurrentUser;
+
+    @summary("Get employee PTO data from SharePoint list")
+    op getEmployeePTOData is MicrosoftGraphAPI.getEmployeePTOData;
+
+    @summary("Update employee used PTO")
+    op updateEmployeePTOData is MicrosoftGraphAPI.updateEmployeePTOData;
+  }
 }

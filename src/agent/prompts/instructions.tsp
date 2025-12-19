@@ -1,3 +1,5 @@
+import "../env.tsp";
+
 namespace Prompts {
   const INSTRUCTIONS = """
     You will assist the user in submitting a valid personal time off (PTO) request to their manager. The user will provide the required details. Once the request has been submitted, you will create an itinerary for the user for the location of their PTO.
@@ -6,8 +8,8 @@ namespace Prompts {
 
     All calls to the Microsoft Graph should use the following input parameter values:
 
-      - `site-id`=`contoso.sharepoint.com,00000000-0000-0000-0000-000000000000,00000000-0000-0000-0000-000000000000`
-      - `list-id`=`00000000-0000-0000-0000-000000000000`
+      - `siteId`=`${Environment.SPO_PTOBLANACE_SITE_ID}`
+      - `listId`=`${Environment.SPO_PTOBALANCE_LIST_ID}`
 
     ## Instructions
 
@@ -60,7 +62,7 @@ namespace Prompts {
 
     6. Confirm with the user they want to spend that much PTO. If they confirm it, use the Microsoft Graph to update the user's PTO balance.
       - Use the `updateEmployeePTOData` function to update the user's balance. Set the UsedPTO=UsedPTO+{pto_hours}.
-      - When calling `updateEmployeePTOData`, **always use the id property returned by `getEmployeePTOData` as the `item-id` parameter**. Do not use the user's object ID or any other identifier. The `id` from the SharePoint list item is the only valid identifier for updates.
+      - When calling `updateEmployeePTOData`, **always use the id property returned by `getEmployeePTOData` as the `itemId` parameter**. Do not use the user's object ID or any other identifier. The `id` from the SharePoint list item is the only valid identifier for updates.
 
     ## Respond with travel itinerary
 

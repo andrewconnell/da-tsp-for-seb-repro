@@ -28,11 +28,6 @@ provision:
     writeToEnvironmentFile:
       teamsAppId: TEAMS_APP_ID
 
-  - uses: aadApp/update
-    with:
-      manifestPath: ./infra/aad.manifest.json
-      outputFilePath: ./apppackage/.generated/aad.manifest.${{TEAMSFX_ENV}}.json
-
   - uses: cli/runNpmCommand
     name: install dependencies
     with:
@@ -54,6 +49,22 @@ provision:
       manifestPath: ./appPackage/manifest.json
       outputDir: ./appPackage/.generated
       typeSpecConfigPath: ./tspconfig.yaml
+
+  - uses: oauth/register
+    with:
+      name: PtoRequestAgent_MSGraphOAuth
+      appId: ${{TEAMS_APP_ID}}
+      clientId: ${{AAD_APP_CLIENT_ID}}
+      clientSecret: ${{SECRET_AAD_APP_CLIENT_SECRET}}
+      apiSpecPath: ./appPackage/.generated/microsoftgraphapiactions-openapi.yml
+      flow: authorizationCode
+    writeToEnvironmentFile:
+      configurationId: PTOREQUESTAGENT_MSGRAPHOAUTH_REGISTRATION_ID
+
+  - uses: aadApp/update
+    with:
+      manifestPath: ./infra/aad.manifest.json
+      outputFilePath: ./apppackage/.generated/aad.manifest.${{TEAMSFX_ENV}}.json
 
   # Build app package with latest env value
   - uses: teamsApp/zipAppPackage
